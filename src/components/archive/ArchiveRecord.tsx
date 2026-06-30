@@ -96,9 +96,12 @@ function buildBlocks(memory: RecoveredMemory): Block[] {
 
   blocks.push({
     kind: "text",
-    text: "PRESS ENTER TO BEGIN MEMORY PLAYBACK",
-    className:
-      "mt-10 text-sm uppercase tracking-[0.3em] text-phosphor text-phosphor-glow sm:text-base",
+    text: memory.locked
+      ? "RECOVERY PENDING — SIGNAL NOT YET FORMED"
+      : "PRESS ENTER TO BEGIN MEMORY PLAYBACK",
+    className: memory.locked
+      ? "mt-10 text-sm uppercase tracking-[0.3em] text-phosphor-dim sm:text-base"
+      : "mt-10 text-sm uppercase tracking-[0.3em] text-phosphor text-phosphor-glow sm:text-base",
     speed: 34,
     cursorPersist: true,
   });

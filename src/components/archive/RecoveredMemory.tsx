@@ -58,8 +58,9 @@ export default function RecoveredMemory({
   }, [router]);
 
   // Once the record is online, Enter (or a tap) begins memory playback.
+  // Locked memories have no playback — only the record and a way back.
   useEffect(() => {
-    if (phase !== "reading" || !armed) return;
+    if (phase !== "reading" || !armed || memory.locked) return;
 
     const begin = () => setPhase("toBlack");
     const onKey = (event: KeyboardEvent) => {
@@ -72,7 +73,7 @@ export default function RecoveredMemory({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", begin);
     };
-  }, [phase, armed]);
+  }, [phase, armed, memory.locked]);
 
   // Cut the hum to silence, hold on black ~1s, then flick + reveal playback.
   useEffect(() => {
@@ -145,7 +146,14 @@ export default function RecoveredMemory({
           )}
         </>
       ) : (
-        <ArchiveRecord memory={memory} onReady={() => setArmed(true)} />
+        <>
+          <ArchiveRecord memory={memory} onReady={() => setArmed(true)} />
+          {memory.locked && armed && (
+            <p className="crt-fade-in mt-10 text-[0.7rem] uppercase tracking-[0.35em] text-phosphor-dim sm:text-xs">
+              PRESS ESC TO RETURN TO ARCHIVE
+            </p>
+          )}
+        </>
       )}
 
       {/* Memory degradation as faint texture during playback. */}
