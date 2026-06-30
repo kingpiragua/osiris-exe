@@ -5,6 +5,7 @@ export const memory004: RecoveredMemory = {
   slug: "the-name-in-the-machine",
   title: "THE NAME IN THE MACHINE",
   status: "RECOVERED",
+  sequenceRole: "identity",
   timestamp: "04:04:00",
   location: "ROOT DIRECTORY / UNKNOWN PROCESS",
   degradation: 54,

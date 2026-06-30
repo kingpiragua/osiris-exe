@@ -9,7 +9,8 @@ export type CommandOutput =
   | { type: "lines"; lines: string[] }
   | { type: "begin" }
   | { type: "clear" }
-  | { type: "reset" };
+  | { type: "reset" }
+  | { type: "navigate"; href: string };
 
 interface CommandSpec {
   name: string;
@@ -32,6 +33,11 @@ export const COMMANDS: CommandSpec[] = [
     name: "begin",
     description: "Start Archive Recovery",
     run: () => ({ type: "begin" }),
+  },
+  {
+    name: "archive",
+    description: "Open the archive index",
+    run: () => ({ type: "navigate", href: "/archive" }),
   },
   {
     name: "help",

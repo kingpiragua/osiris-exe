@@ -22,6 +22,8 @@ interface TerminalProps {
   onRecover?: () => void;
   /** Called when `begin` arms the terminal (recovered memory found). */
   onArm?: () => void;
+  /** Called when a command requests navigation (e.g. `archive`). */
+  onNavigate?: (href: string) => void;
 }
 
 /**
@@ -29,7 +31,7 @@ interface TerminalProps {
  * delegates parsing to CommandParser, and auto-scrolls to the waiting prompt.
  * After `begin`, the next Enter triggers onRecover. No backend — all local.
  */
-export default function Terminal({ onRecover, onArm }: TerminalProps) {
+export default function Terminal({ onRecover, onArm, onNavigate }: TerminalProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [armed, setArmed] = useState(false);
   const nextId = useRef(0);
@@ -49,6 +51,16 @@ export default function Terminal({ onRecover, onArm }: TerminalProps) {
     if (result?.type === "clear") {
       setHistory([]);
       setArmed(false);
+      return;
+    }
+
+    // Command-driven navigation (e.g. `archive`).
+    if (result?.type === "navigate") {
+      setHistory((prev) => [
+        ...prev,
+        { id: nextId.current++, kind: "input", text: raw },
+      ]);
+      onNavigate?.(result.href);
       return;
     }
 

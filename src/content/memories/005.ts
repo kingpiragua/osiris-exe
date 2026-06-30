@@ -5,6 +5,7 @@ export const memory005: RecoveredMemory = {
   slug: "before-the-wire",
   title: "BEFORE THE WIRE",
   status: "RECOVERED",
+  sequenceRole: "history",
   timestamp: "UNKNOWN",
   location: "PRE-DIGITAL MEMORY",
   degradation: 63,

@@ -89,11 +89,14 @@ export default function ArchiveSession() {
     };
   }, [bootDone]);
 
-  // Recovery confirmed: fade the screen out, then enter the archive.
-  const handleRecover = () => {
+  // Fade the screen out, then navigate.
+  const handleNavigate = (href: string) => {
     setLeaving(true);
-    setTimeout(() => router.push("/archive/001"), 800);
+    setTimeout(() => router.push(href), 800);
   };
+
+  // Recovery confirmed: enter the first fragment.
+  const handleRecover = () => handleNavigate("/archive/001");
 
   // Wait until we know whether to boot — avoids a flash of boot for returners.
   if (returning === null) return null;
@@ -127,7 +130,11 @@ export default function ArchiveSession() {
               the archive remembers you.
             </p>
           )}
-          <Terminal onArm={() => setRecovering(true)} onRecover={handleRecover} />
+          <Terminal
+            onArm={() => setRecovering(true)}
+            onRecover={handleRecover}
+            onNavigate={handleNavigate}
+          />
         </div>
       )}
 

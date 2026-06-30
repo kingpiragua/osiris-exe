@@ -6,6 +6,7 @@ export const memory001: RecoveredMemory = {
   location: "HUMBOLDT PARK / DIVISION STREET",
   date: "UNKNOWN",
   status: "RECOVERED",
+  sequenceRole: "place",
   recoveryType: "VISUAL MEMORY",
   signalQuality: 87,
   degradation: 13,

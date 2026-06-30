@@ -51,7 +51,7 @@ export default function RecoveredMemory({
   // Esc returns to the archive at any time.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") router.push("/");
+      if (event.key === "Escape") router.push("/archive");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

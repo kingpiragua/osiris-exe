@@ -32,6 +32,10 @@ export interface RecoveredMemory {
   status: string;
   /** When true, the memory exists but cannot be played back yet (a teaser). */
   locked?: boolean;
+  /** Narrative role in the sequence (e.g. "place", "signal"). Shown in the index. */
+  sequenceRole?: string;
+  /** Act grouping for the archive index (defaults to 1). */
+  act?: number;
   recoveryType?: string;
   /** Signal quality, 0–100. Renders the SIGNAL QUALITY meter when present. */
   signalQuality?: number;

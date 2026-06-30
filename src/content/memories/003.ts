@@ -5,6 +5,7 @@ export const memory003: RecoveredMemory = {
   slug: "the-first-eye",
   title: "THE FIRST EYE",
   status: "RECOVERED",
+  sequenceRole: "presence",
   timestamp: "03:33:00",
   location: "INSIDE THE MACHINE",
   degradation: 41,

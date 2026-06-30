@@ -5,6 +5,7 @@ export const memory002: RecoveredMemory = {
   slug: "signal",
   title: "SIGNAL",
   status: "RECOVERED",
+  sequenceRole: "signal",
   timestamp: "02:47:00",
   location: "UNKNOWN / CRT SOURCE",
   degradation: 27,
