@@ -8,6 +8,7 @@ import {
   parseCommand,
   type CommandOutput,
 } from "@/components/terminal/CommandParser";
+import { clearRecovery } from "@/lib/recovery";
 
 type HistoryEntry =
   | { id: number; kind: "input"; text: string }
@@ -48,6 +49,25 @@ export default function Terminal({ onRecover, onArm }: TerminalProps) {
     if (result?.type === "clear") {
       setHistory([]);
       setArmed(false);
+      return;
+    }
+
+    // Hidden: purge recovery state, then reboot from the beginning.
+    if (result?.type === "reset") {
+      clearRecovery();
+      setHistory((prev) => [
+        ...prev,
+        { id: nextId.current++, kind: "input", text: raw },
+        {
+          id: nextId.current++,
+          kind: "output",
+          output: {
+            type: "lines",
+            lines: ["PURGING RECOVERED STATE...", "REBOOTING ARCHIVE..."],
+          },
+        },
+      ]);
+      window.setTimeout(() => window.location.reload(), 1100);
       return;
     }
 

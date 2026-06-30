@@ -8,7 +8,8 @@
 export type CommandOutput =
   | { type: "lines"; lines: string[] }
   | { type: "begin" }
-  | { type: "clear" };
+  | { type: "clear" }
+  | { type: "reset" };
 
 interface CommandSpec {
   name: string;
@@ -53,6 +54,10 @@ const COMMAND_MAP = new Map(COMMANDS.map((command) => [command.name, command]));
 export function parseCommand(raw: string): CommandOutput | null {
   const name = raw.trim().toLowerCase();
   if (!name) return null;
+
+  // Hidden dev command: purge recovery state and reboot. Intentionally not in
+  // COMMANDS, so `help` never lists it.
+  if (name === "reset") return { type: "reset" };
 
   const command = COMMAND_MAP.get(name);
   if (command) return command.run();

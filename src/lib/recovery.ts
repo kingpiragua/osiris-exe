@@ -30,3 +30,15 @@ export const markBootSeen = () => write(BOOT_SEEN);
 
 export const hasRecoveredMemory = (id: string) => read(memoryKey(id));
 export const markMemoryRecovered = (id: string) => write(memoryKey(id));
+
+/** Purge all recovery state so the experience starts from the beginning. */
+export function clearRecovery(): void {
+  try {
+    if (typeof window === "undefined") return;
+    Object.keys(window.localStorage)
+      .filter((key) => key.startsWith("osiris."))
+      .forEach((key) => window.localStorage.removeItem(key));
+  } catch {
+    /* storage unavailable — degrade silently */
+  }
+}
