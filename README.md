@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="public/cover.jpeg" alt="OSIRIS.EXE — Enmascarado Unit: folklore as firmware" width="520">
+</p>
 
-## Getting Started
+<h1 align="center">OSIRIS.EXE</h1>
 
-First, run the development server:
+<p align="center"><em>Folklore as firmware. The archive never died — it remembered.</em></p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+The operating system of the OSIRIS.EXE universe — an ancient archive that survived
+attempts to erase it. You don't browse it; you are granted permission to
+**recover memory**. A sacred green-phosphor CRT experience: a boot rite, an
+interactive terminal, and recovered fragments that play like memories surfacing.
+
+## Live
+
+- **Repository:** https://github.com/kingpiragua/osiris-exe
+- **Run locally:** `npm run dev` → <http://localhost:3000>
+- _No public deployment yet — see [Deploy](#deploy)._
+
+## The experience
+
+```
+boot rite → terminal → begin (recover) or archive (browse)
+          → recovered fragments → Esc back to the archive
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Terminal commands: `help`, `begin`, `archive`, `clear`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Recovered fragments
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| # | Title | Role |
+|---|-------|------|
+| 001 | THE ARCHIVE | place |
+| 002 | SIGNAL | signal |
+| 003 | THE FIRST EYE | presence |
+| 004 | THE NAME IN THE MACHINE | identity |
+| 005 | BEFORE THE WIRE | history |
 
-## Learn More
+Browse them in-world at `/archive`, or recover the first via the terminal's
+`begin`.
 
-To learn more about Next.js, take a look at the following resources:
+## Run locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> Tip: click or press a key on first load so the CRT hum can start (browser
+> autoplay needs one interaction). Type `reset` at the prompt to replay the boot.
 
-## Deploy on Vercel
+## How it works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Next.js (App Router) + TypeScript + Tailwind.** No backend.
+- **Config-driven Archive Engine** — each fragment declares its playback via a
+  `memory.effects` config (boot sequence, corruption, eye/root/organic fields,
+  final reveal…). Adding a fragment is a single data file in
+  `src/content/memories/`, rendered by `/archive/[id]` — no new components.
+- **Procedural CRT sound** (Web Audio, no assets): hum → silence → phosphor flick.
+- **Restraint as design:** black, phosphor green (#7DFFB0), scanlines, the DISK
+  signature, and the slow ritual of recovery.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Documentation
+
+- [`docs/OSIRIS_VISION.md`](docs/OSIRIS_VISION.md) — design intent
+- [`docs/MASTER_BLUEPRINT/`](docs/MASTER_BLUEPRINT/) — the franchise blueprint
+
+## Deploy
+
+This is a standard Next.js app and deploys cleanly to
+[Vercel](https://vercel.com/new). Once deployed, replace the **Live** link above
+with the deployment URL.
+
+---
+
+© Disk Darián (kingpiragua). All rights reserved.
