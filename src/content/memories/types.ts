@@ -42,13 +42,47 @@ export interface RecoveredMemory {
   /** Playback panels (artwork optional — placeholder lines otherwise). */
   panels: MemoryPanel[];
 
-  // --- Optional SIGNAL-transmission playback treatment --------------------
+  // --- Optional playback content ------------------------------------------
   /** Boot/recovery lines typed before the panels (e.g. "SIGNAL DETECTED..."). */
   bootLines?: string[];
-  /** Faint burn-in words drifting behind the playback. */
+  /** Faint burn-in words drifting behind the playback (the SIGNAL ghost field). */
   ghostWords?: string[];
   /** Lines typed after the last panel, before the final reveal. */
   afterLines?: string[];
-  /** The final reveal line — rendered slower and brighter. */
+  /** The final reveal line — rendered per `effects.finalReveal`. */
   finalLine?: string;
+
+  /** Declares which playback capabilities this fragment composes. */
+  effects?: MemoryEffects;
+}
+
+export interface MemoryEffects {
+  /** Descriptive base mode (informational / future palette hooks). */
+  visualMode?:
+    | "terminal"
+    | "phosphor"
+    | "signal"
+    | "eye"
+    | "root"
+    | "organic"
+    | "glyph"
+    | "dream";
+  /** Type the bootLines before the panels. */
+  bootSequence?: boolean;
+  /** Corruption flashes between panels. */
+  corruption?: boolean;
+  /** Whether this fragment carries panel artwork (data flag; rendering keys off panel.image). */
+  image?: boolean;
+  /** Render the SIGNAL ghost burn-in field. */
+  ghostWords?: boolean;
+  /** Render the eye field. */
+  eyeField?: boolean;
+  /** Render the root/code field. */
+  rootField?: boolean;
+  /** Render the organic rings field. */
+  organicField?: boolean;
+  /** Final reveal treatment. "none" hides the finalLine entirely. */
+  finalReveal?: "none" | "standard" | "osiris" | "root" | "remember";
+  /** Future: ambient audio (not implemented yet). */
+  ambientAudio?: boolean;
 }

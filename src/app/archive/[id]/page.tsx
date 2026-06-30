@@ -18,7 +18,7 @@ export async function generateMetadata({
   const memory = getMemory(id);
   return {
     title: memory
-      ? `OSIRIS.EXE — Recovered Memory ${memory.id}`
+      ? `OSIRIS.EXE — Recovered Fragment ${memory.id}`
       : "OSIRIS.EXE — Archive",
   };
 }

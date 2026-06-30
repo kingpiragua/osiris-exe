@@ -10,15 +10,15 @@ const LINES: NoticeLine[] = [
     className: "text-[0.7rem] uppercase tracking-[0.4em] text-phosphor-dim sm:text-sm",
   },
   {
-    text: "RECOVERED MEMORY AVAILABLE",
+    text: "RECOVERED FRAGMENT AVAILABLE",
     className: "text-sm uppercase tracking-[0.3em] text-phosphor text-phosphor-glow sm:text-base",
   },
   {
-    text: "RECOVERED MEMORY 001",
+    text: "RECOVERED FRAGMENT 001",
     className: "mt-4 text-[0.7rem] uppercase tracking-[0.45em] text-phosphor-dim sm:text-sm",
   },
   {
-    text: "THE GESTURE",
+    text: "THE ARCHIVE",
     className: "text-2xl font-bold uppercase tracking-[0.35em] text-phosphor text-phosphor-glow sm:text-4xl",
   },
   {

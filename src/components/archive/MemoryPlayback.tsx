@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 
+import EyeField from "@/components/effects/EyeField";
 import GhostLayer from "@/components/effects/GhostLayer";
+import RingsField from "@/components/effects/RingsField";
+import RootField from "@/components/effects/RootField";
 import TypingText from "@/components/crt/TypingText";
 import type { MemoryPanel, RecoveredMemory } from "@/content/memories";
 
@@ -21,13 +24,15 @@ type Step =
   | { kind: "final"; text: string };
 
 function buildSteps(memory: RecoveredMemory): Step[] {
+  const fx = memory.effects ?? {};
   const steps: Step[] = [];
-  const signal = Boolean(memory.bootLines || memory.finalLine);
 
-  (memory.bootLines ?? []).forEach((text) => steps.push({ kind: "boot", text }));
+  if (fx.bootSequence) {
+    (memory.bootLines ?? []).forEach((text) => steps.push({ kind: "boot", text }));
+  }
 
   memory.panels.forEach((panel, i) => {
-    if (signal && i > 0) steps.push({ kind: "static" });
+    if (fx.corruption && i > 0) steps.push({ kind: "static" });
     steps.push({ kind: "panel", panel });
   });
 
@@ -35,9 +40,25 @@ function buildSteps(memory: RecoveredMemory): Step[] {
     steps.push({ kind: "after", text, first: i === 0 }),
   );
 
-  if (memory.finalLine) steps.push({ kind: "final", text: memory.finalLine });
+  if (memory.finalLine && fx.finalReveal !== "none") {
+    steps.push({ kind: "final", text: memory.finalLine });
+  }
 
   return steps;
+}
+
+// Final-reveal class per effects.finalReveal.
+function finalRevealClass(reveal: string | undefined): string {
+  switch (reveal) {
+    case "osiris":
+      return "memory-eye-final mt-6 font-bold uppercase text-phosphor";
+    case "root":
+      return "memory-root-final mt-6 font-bold uppercase text-phosphor";
+    case "remember":
+      return "memory-remember-final mt-8 self-center text-center font-bold uppercase text-phosphor";
+    default:
+      return "memory-final-quiet mt-8 self-center text-center font-bold uppercase text-phosphor";
+  }
 }
 
 // Quick corruption flash shown between panels.
@@ -57,6 +78,7 @@ const CORRUPTION_LINES = [
  * All derived from data; Memory 001's path is unchanged.
  */
 export default function MemoryPlayback({ memory, onComplete }: MemoryPlaybackProps) {
+  const fx = memory.effects ?? {};
   const steps = useMemo(() => buildSteps(memory), [memory]);
   const [index, setIndex] = useState(0);
 
@@ -82,7 +104,12 @@ export default function MemoryPlayback({ memory, onComplete }: MemoryPlaybackPro
 
   return (
     <div className="relative w-full">
-      {memory.ghostWords && <GhostLayer words={memory.ghostWords} />}
+      {fx.ghostWords && memory.ghostWords && (
+        <GhostLayer words={memory.ghostWords} />
+      )}
+      {fx.eyeField && <EyeField />}
+      {fx.rootField && <RootField />}
+      {fx.organicField && <RingsField />}
 
       <div className="relative z-10 flex w-full flex-col items-start gap-7">
         <p className="crt-fade-in text-xs uppercase tracking-[0.3em] text-phosphor-dim sm:text-sm">
@@ -148,7 +175,7 @@ export default function MemoryPlayback({ memory, onComplete }: MemoryPlaybackPro
                 startDelay={1500}
                 cursor={i === index}
                 cursorPersist={isLast}
-                className="signal-final mt-4 text-3xl font-bold uppercase tracking-[0.4em] text-phosphor sm:text-5xl"
+                className={finalRevealClass(fx.finalReveal)}
                 onComplete={() => advance(i)}
               />
             );
@@ -159,14 +186,9 @@ export default function MemoryPlayback({ memory, onComplete }: MemoryPlaybackPro
           const lineDelay = panel.image ? 3600 : 500;
 
           return (
+            // Panel id (panel.id) is kept in data but intentionally not
+            // rendered — keeps recovered fragments cinematic.
             <div key={i} className="flex w-full flex-col items-start gap-6">
-              <p
-                className="crt-fade-in text-[0.7rem] uppercase tracking-[0.45em] text-phosphor-dim sm:text-sm"
-                style={{ animationDelay: "400ms" }}
-              >
-                {panel.id}
-              </p>
-
               {panel.image && (
                 <div className="flex w-full justify-center">
                   <figure

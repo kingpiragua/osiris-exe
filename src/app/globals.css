@@ -682,12 +682,240 @@ body {
   }
 }
 
-/* The final reveal — heavier phosphor glow than any other text. */
-.signal-final {
+/* Quiet final reveal for intermediate memories — larger than body, gentle glow.
+   (Milestone memories use .memory-milestone-final instead.) */
+.memory-final-quiet {
+  font-size: clamp(1.3rem, 4vw, 2.2rem);
+  letter-spacing: 0.16em;
   text-shadow:
-    0 0 6px rgba(125, 255, 176, 0.95),
-    0 0 20px rgba(125, 255, 176, 0.6),
-    0 0 44px rgba(125, 255, 176, 0.4);
+    0 0 8px rgba(125, 255, 176, 0.6),
+    0 0 22px rgba(125, 255, 176, 0.3);
+}
+
+/* --- PRESENCE treatment (Memory 003 — the eye) ----------------------------- */
+/* Portaled to <body>, so fixed to the viewport and behind the CRT shell. */
+.memory-eye-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.memory-eye {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(72vw, 720px);
+  height: min(38vw, 360px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.95) 0 11%, transparent 12%),
+    radial-gradient(
+      ellipse at center,
+      rgba(125, 255, 176, 0.18),
+      rgba(125, 255, 176, 0.04) 45%,
+      transparent 70%
+    );
+  border: 1px solid rgba(125, 255, 176, 0.12);
+  opacity: 0.35;
+  filter: blur(0.2px);
+  will-change: transform, opacity;
+  animation: memoryEyeBlink 7s infinite;
+}
+
+.memory-eye::before {
+  content: "";
+  position: absolute;
+  inset: 14% 26%;
+  border-radius: 50%;
+  border: 1px solid rgba(125, 255, 176, 0.2);
+  box-shadow:
+    0 0 22px rgba(125, 255, 176, 0.2),
+    inset 0 0 30px rgba(125, 255, 176, 0.12);
+}
+
+.memory-eye::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35) 0 1px,
+    transparent 1px 4px
+  );
+  opacity: 0.6;
+  border-radius: inherit;
+}
+
+@keyframes memoryEyeBlink {
+  0%,
+  86%,
+  100% {
+    transform: translate(-50%, -50%) scaleY(1);
+    opacity: 0.35;
+  }
+  90% {
+    transform: translate(-50%, -50%) scaleY(0.08);
+    opacity: 0.22;
+  }
+  94% {
+    transform: translate(-50%, -50%) scaleY(1);
+    opacity: 0.38;
+  }
+}
+
+/* Final reveals, selected by effects.finalReveal. ----------------------------- */
+
+/* "osiris" — the large full-screen reveal (milestone fragments). */
+.memory-eye-final {
+  font-size: clamp(2.5rem, 10vw, 8rem);
+  letter-spacing: 0.18em;
+  text-shadow:
+    0 0 12px rgba(125, 255, 176, 0.95),
+    0 0 36px rgba(125, 255, 176, 0.65),
+    0 0 80px rgba(125, 255, 176, 0.35);
+}
+
+/* "root" — strong glow, slightly smaller. */
+.memory-root-final {
+  font-size: clamp(2.2rem, 8vw, 6rem);
+  letter-spacing: 0.16em;
+  text-shadow:
+    0 0 12px rgba(125, 255, 176, 0.95),
+    0 0 34px rgba(125, 255, 176, 0.58),
+    0 0 70px rgba(125, 255, 176, 0.3);
+}
+
+/* "remember" — centered, medium-large. */
+.memory-remember-final {
+  font-size: clamp(2rem, 7vw, 5rem);
+  letter-spacing: 0.18em;
+  text-shadow:
+    0 0 12px rgba(125, 255, 176, 0.95),
+    0 0 38px rgba(125, 255, 176, 0.5);
+}
+
+/* "organic" — placeholder for a future organic-mode reveal. */
+.memory-organic-final {
+  font-size: clamp(1.8rem, 5vw, 4rem);
+  letter-spacing: 0.14em;
+  text-shadow:
+    0 0 10px rgba(125, 255, 176, 0.85),
+    0 0 28px rgba(211, 177, 89, 0.28);
+}
+
+/* --- IDENTITY treatment (Memory 004 — the root directory) ------------------ */
+/* Portaled to <body>: a faint, drifting corrupted-file-system backdrop. */
+.memory-root-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.08;
+}
+
+.memory-root-field span {
+  position: absolute;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.8rem, 1.6vw, 1.1rem);
+  color: rgba(125, 255, 176, 0.35);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  will-change: transform, opacity;
+  animation: rootDrift 12s linear infinite;
+}
+
+@keyframes rootDrift {
+  0% {
+    transform: translate3d(0, 12px, 0);
+    opacity: 0.02;
+  }
+  35% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: translate3d(0, -18px, 0);
+    opacity: 0.04;
+  }
+}
+
+/* --- ANCESTRAL treatment (Memory 005 — before the wire) -------------------- */
+/* No terminal, no eye, no glitch: rings of age, warm amber edges, film grain. */
+.memory-rings-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Faint concentric rings — tree rings / vinyl grooves / growth lines. */
+.memory-rings {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(170vw, 1500px);
+  height: min(170vw, 1500px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    rgba(125, 255, 176, 0.06) 0 1px,
+    transparent 1px 16px
+  );
+  opacity: 0.5;
+  will-change: transform;
+  animation: ringsDrift 44s linear infinite alternate;
+}
+
+/* Warm phosphor at center fading to amber at the edges. */
+.memory-rings-warm {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(125, 255, 176, 0.05) 0 38%,
+    rgba(217, 155, 69, 0.06) 74%,
+    rgba(217, 155, 69, 0.13) 100%
+  );
+  mix-blend-mode: screen;
+}
+
+/* Slow drifting film grain (analog, not digital). */
+.memory-rings-grain {
+  position: absolute;
+  inset: -2%;
+  background-image: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.03) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  will-change: transform;
+  animation: filmGrain 2.6s steps(4, end) infinite;
+}
+
+@keyframes ringsDrift {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+@keyframes filmGrain {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-1.2%, 1%, 0);
+  }
 }
 
 /* --- Fade to black when entering a recovered memory ------------------------ */
@@ -734,7 +962,11 @@ body {
   .memory-static,
   .memory-glitch-bars,
   .ghost-word,
-  .signal-corruption {
+  .signal-corruption,
+  .memory-eye,
+  .memory-root-field span,
+  .memory-rings,
+  .memory-rings-grain {
     animation: none;
   }
   /* Boot-glitch base opacity is 0; show the art for reduced-motion users. */

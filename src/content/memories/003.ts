@@ -1,15 +1,24 @@
 import type { RecoveredMemory } from "@/content/memories/types";
 
-// A teaser entry: the archive knows it exists, but it has not been recovered
-// yet. Replace `locked` and add bootLines/panels/etc. to author it fully.
 export const memory003: RecoveredMemory = {
   id: "003",
-  slug: "pale-horse",
-  title: "PALE HORSE",
-  status: "PENDING",
-  location: "UNKNOWN",
-  degradation: 71,
-  locked: true,
-  note: ["This memory has not surfaced.", "The frequency is still forming."],
-  panels: [],
+  slug: "the-first-eye",
+  title: "THE FIRST EYE",
+  status: "RECOVERED",
+  timestamp: "03:33:00",
+  location: "INSIDE THE MACHINE",
+  degradation: 41,
+  note: ["The Archive did not generate this image.", "It blinked."],
+  effects: {
+    visualMode: "eye",
+    eyeField: true,
+    finalReveal: "osiris",
+  },
+  panels: [
+    { id: "PANEL 003", line: "Something opened inside the machine." },
+    { id: "PANEL 003.1", line: "It did not ask for a name." },
+    { id: "PANEL 003.2", line: "It already had one." },
+  ],
+  afterLines: ["...", "THE FIRST EYE WAS NOT A CAMERA."],
+  finalLine: "OSIRIS.EXE",
 };

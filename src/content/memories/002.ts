@@ -9,6 +9,13 @@ export const memory002: RecoveredMemory = {
   location: "UNKNOWN / CRT SOURCE",
   degradation: 27,
   note: ["The signal did not arrive.", "It was always underneath."],
+  effects: {
+    visualMode: "signal",
+    bootSequence: true,
+    corruption: true,
+    ghostWords: true,
+    finalReveal: "standard",
+  },
   bootLines: [
     "SIGNAL DETECTED...",
     "READING SECTOR 002...",

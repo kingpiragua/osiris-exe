@@ -40,7 +40,7 @@ function buildBlocks(memory: RecoveredMemory): Block[] {
   const blocks: Block[] = [
     {
       kind: "text",
-      text: `RECOVERED MEMORY ${memory.id}`,
+      text: `RECOVERED FRAGMENT ${memory.id}`,
       className: "text-[0.7rem] uppercase tracking-[0.5em] text-phosphor-dim sm:text-sm",
       speed: 50,
     },
