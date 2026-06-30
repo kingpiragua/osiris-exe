@@ -486,6 +486,139 @@ body {
   );
 }
 
+/* Panel boot-in: the artwork glitches and bursts with static before settling.
+   The figure is centered by its flex wrapper, so the boot keyframes only jitter
+   on X (returning to none) without fighting the centering. */
+.memory-boot-glitch {
+  opacity: 0;
+  animation: memoryBoot 3.4s steps(18, end) 0.5s both;
+}
+
+.memory-static {
+  background-image:
+    radial-gradient(circle, rgba(125, 255, 176, 0.8) 0 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 1px, transparent 1px),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(125, 255, 176, 0.16) 0 1px,
+      transparent 1px 4px
+    );
+  background-size: 3px 3px, 5px 5px, 100% 6px;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: staticBurst 3.1s steps(16, end) 0.45s both;
+}
+
+.memory-glitch-bars {
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(125, 255, 176, 0.45) 10%,
+      transparent 13%,
+      transparent 34%,
+      rgba(255, 255, 255, 0.25) 36%,
+      transparent 39%,
+      transparent 62%,
+      rgba(125, 255, 176, 0.32) 66%,
+      transparent 70%
+    );
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: glitchBars 2.8s steps(12, end) 0.55s both;
+}
+
+@keyframes memoryBoot {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985) skewX(-5deg);
+    filter: brightness(1.9) contrast(1.5);
+  }
+  8% {
+    opacity: 0.2;
+    transform: translateX(22px) scaleY(1.02) skewX(4deg);
+  }
+  16% {
+    opacity: 0.05;
+    transform: translateX(-18px) scaleY(0.96) skewX(-3deg);
+  }
+  28% {
+    opacity: 0.55;
+    transform: translateX(12px) skewX(2deg);
+  }
+  45% {
+    opacity: 0.25;
+    transform: translateX(-8px);
+  }
+  65% {
+    opacity: 0.85;
+    transform: translateX(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes staticBurst {
+  0% {
+    opacity: 1;
+    transform: translateX(-3%);
+  }
+  14% {
+    opacity: 0.85;
+    transform: translateX(4%);
+  }
+  28% {
+    opacity: 1;
+    transform: translateX(-2%);
+  }
+  42% {
+    opacity: 0.55;
+    transform: translateX(5%);
+  }
+  58% {
+    opacity: 0.75;
+    transform: translateX(-4%);
+  }
+  74% {
+    opacity: 0.35;
+    transform: translateX(2%);
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+@keyframes glitchBars {
+  0% {
+    opacity: 0.85;
+    transform: translateY(-22%);
+  }
+  20% {
+    opacity: 0.55;
+    transform: translateY(10%);
+  }
+  38% {
+    opacity: 0.9;
+    transform: translateY(-6%);
+  }
+  58% {
+    opacity: 0.4;
+    transform: translateY(22%);
+  }
+  78% {
+    opacity: 0.55;
+    transform: translateY(4%);
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
 /* --- Fade to black when entering a recovered memory ------------------------ */
 .archive-fadeout {
   opacity: 0;
@@ -525,8 +658,15 @@ body {
   .crt-shimmer,
   .disk-bloom,
   .disk-progress,
-  .memory-grain {
+  .memory-grain,
+  .memory-boot-glitch,
+  .memory-static,
+  .memory-glitch-bars {
     animation: none;
+  }
+  /* Boot-glitch base opacity is 0; show the art for reduced-motion users. */
+  .memory-boot-glitch {
+    opacity: 1;
   }
   .cursor-blink {
     animation: none;

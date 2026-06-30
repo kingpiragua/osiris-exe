@@ -17,10 +17,10 @@ interface MemoryPlaybackProps {
  */
 export default function MemoryPlayback({ panels }: MemoryPlaybackProps) {
   const panel = panels[0];
-  const lineDelay = panel?.image ? 1700 : 1100;
+  const lineDelay = panel?.image ? 3600 : 1100;
 
   return (
-    <div className="flex w-full flex-col items-start gap-6">
+    <div className="flex w-full flex-col items-start gap-7">
       <p className="crt-fade-in text-xs uppercase tracking-[0.3em] text-phosphor-dim sm:text-sm">
         [ MEMORY PLAYBACK INITIALIZED ]
       </p>
@@ -35,30 +35,40 @@ export default function MemoryPlayback({ panels }: MemoryPlaybackProps) {
           </p>
 
           {panel.image && (
-            <figure
-              className="crt-fade-in relative w-full overflow-hidden border border-phosphor-dim/30 bg-black"
-              style={{ animationDelay: "800ms" }}
-            >
-              <Image
-                src={panel.image}
-                alt={panel.alt ?? ""}
-                width={panel.imageWidth ?? 1092}
-                height={panel.imageHeight ?? 720}
-                className="memory-image block h-auto w-full"
-              />
-              <span
-                aria-hidden="true"
-                className="memory-glow pointer-events-none absolute inset-0"
-              />
-              <span
-                aria-hidden="true"
-                className="memory-scan pointer-events-none absolute inset-0"
-              />
-              <span
-                aria-hidden="true"
-                className="memory-edge pointer-events-none absolute inset-0"
-              />
-            </figure>
+            <div className="flex w-full justify-center">
+              <figure
+                className="crt-fade-in memory-boot-glitch relative w-[92vw] max-w-5xl overflow-hidden border border-phosphor-dim/30 bg-black"
+                style={{ animationDelay: "500ms" }}
+              >
+                <Image
+                  src={panel.image}
+                  alt={panel.alt ?? ""}
+                  width={panel.imageWidth ?? 1092}
+                  height={panel.imageHeight ?? 720}
+                  className="memory-image block h-auto w-full"
+                />
+                <span
+                  aria-hidden="true"
+                  className="memory-static pointer-events-none absolute inset-0"
+                />
+                <span
+                  aria-hidden="true"
+                  className="memory-glitch-bars pointer-events-none absolute inset-0"
+                />
+                <span
+                  aria-hidden="true"
+                  className="memory-glow pointer-events-none absolute inset-0"
+                />
+                <span
+                  aria-hidden="true"
+                  className="memory-scan pointer-events-none absolute inset-0"
+                />
+                <span
+                  aria-hidden="true"
+                  className="memory-edge pointer-events-none absolute inset-0"
+                />
+              </figure>
+            </div>
           )}
 
           <TypingText
