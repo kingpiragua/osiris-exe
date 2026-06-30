@@ -1,0 +1,516 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #7dffb0;
+  --phosphor: #7dffb0;
+  --phosphor-dim: #3f8f68;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-phosphor: var(--phosphor);
+  --color-phosphor-dim: var(--phosphor-dim);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* ============================================================================
+   OSIRIS.EXE — CRT archive terminal
+   IBM-style green phosphor: bloom, curvature, scanlines, sync tears, flicker.
+   ========================================================================= */
+
+/* --- THE DISK: the system's signature presence ----------------------------- */
+/* Ambient by default; the halo (the "O") rises when `.recovering` is set. */
+.disk {
+  display: grid;
+  place-items: center;
+}
+
+.disk > * {
+  grid-area: 1 / 1;
+}
+
+.disk-bloom {
+  width: min(72vmin, 720px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(125, 255, 176, 0.12),
+    rgba(125, 255, 176, 0.05) 38%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  animation: disk-breathe 9s ease-in-out infinite;
+}
+
+.disk-halo {
+  width: min(52vmin, 540px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(125, 255, 176, 0.1);
+  box-shadow:
+    inset 0 0 60px rgba(125, 255, 176, 0.05),
+    0 0 30px rgba(125, 255, 176, 0.04);
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+/* Recovery indicator: a thin arc that completes from 0 → full as memory is
+   recovered during boot. Driven by --disk-progress (0..1). Very subtle. */
+.disk-progress {
+  width: min(52vmin, 540px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -90deg,
+    rgba(125, 255, 176, 0.9) 0deg,
+    rgba(125, 255, 176, 0.9) calc(var(--disk-progress, 0) * 1turn),
+    transparent calc(var(--disk-progress, 0) * 1turn)
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  opacity: 0.12;
+}
+
+/* On completion, the arc pulses once, faintly. */
+.disk-complete .disk-progress {
+  animation: disk-arc-pulse 2.4s ease 1;
+}
+
+@keyframes disk-arc-pulse {
+  0% {
+    opacity: 0.12;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.12;
+  }
+}
+
+@keyframes disk-breathe {
+  0%,
+  100% {
+    opacity: 0.34;
+    transform: scale(0.985);
+  }
+  50% {
+    opacity: 0.52;
+    transform: scale(1.015);
+  }
+}
+
+/* During recovery the halo rises into view and the bloom warms / quickens. */
+.recovering .disk-halo {
+  opacity: 1;
+}
+
+.recovering .disk-bloom {
+  opacity: 0.66;
+  animation-duration: 5s;
+}
+
+/* --- Phosphor bloom on text ------------------------------------------------ */
+.text-phosphor-glow {
+  text-shadow:
+    0 0 2px rgba(125, 255, 176, 0.7),
+    0 0 8px rgba(125, 255, 176, 0.45),
+    0 0 22px rgba(125, 255, 176, 0.22);
+}
+
+/* --- The tube: barrel curvature illusion ----------------------------------- */
+/* A viewport-fixed inset shadow reads as a curved CRT face, independent of how
+   far the archive scrolls. The content layer takes a faint perspective tilt so
+   the "glass" feels slightly domed. */
+.crt-curve {
+  border-radius: 2.2rem;
+  box-shadow:
+    inset 0 0 160px rgba(0, 0, 0, 0.95),
+    inset 0 0 50px rgba(0, 0, 0, 0.7);
+}
+
+.crt-content {
+  transform: perspective(1400px) scale(0.998);
+  transform-origin: center;
+}
+
+/* --- Whole-screen green bloom ---------------------------------------------- */
+.crt-bloom {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(125, 255, 176, 0.07),
+    rgba(125, 255, 176, 0.02) 45%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+}
+
+/* --- Subtle scanlines ------------------------------------------------------ */
+.crt-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.18) 0px,
+    rgba(0, 0, 0, 0.18) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.5;
+}
+
+/* --- Curved-edge darkening (vignette) -------------------------------------- */
+.crt-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 42%,
+    rgba(0, 0, 0, 0.55) 78%,
+    rgba(0, 0, 0, 0.92) 100%
+  );
+}
+
+/* --- Flicker: slow brightness drift + tiny random phosphor flickers -------- */
+.crt-flicker {
+  animation:
+    crt-flicker 5.2s infinite,
+    crt-microflicker 3.7s infinite steps(1);
+}
+
+@keyframes crt-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  18% {
+    opacity: 0.97;
+  }
+  40% {
+    opacity: 0.99;
+  }
+  62% {
+    opacity: 0.96;
+  }
+  84% {
+    opacity: 0.99;
+  }
+}
+
+/* Sparse, abrupt micro-dips — the "tiny random phosphor flickers". */
+@keyframes crt-microflicker {
+  0%,
+  6%,
+  100% {
+    opacity: 1;
+  }
+  6.4% {
+    opacity: 0.86;
+  }
+  6.8% {
+    opacity: 1;
+  }
+  43% {
+    opacity: 1;
+  }
+  43.3% {
+    opacity: 0.9;
+  }
+  43.6% {
+    opacity: 1;
+  }
+  71% {
+    opacity: 1;
+  }
+  71.4% {
+    opacity: 0.82;
+  }
+  71.8% {
+    opacity: 1;
+  }
+}
+
+/* --- Occasional horizontal sync distortion --------------------------------- */
+/* Mostly identity; brief jolts a few times a minute. Two layered durations so
+   the tears don't land on a predictable beat. */
+.crt-hsync {
+  animation:
+    crt-hsync-a 9s infinite,
+    crt-hsync-b 13.7s infinite;
+}
+
+@keyframes crt-hsync-a {
+  0%,
+  95.5%,
+  100% {
+    transform: translateX(0) skewX(0deg);
+  }
+  96% {
+    transform: translateX(-4px) skewX(0.5deg);
+  }
+  96.6% {
+    transform: translateX(3px) skewX(-0.35deg);
+  }
+  97.2% {
+    transform: translateX(0) skewX(0deg);
+  }
+}
+
+@keyframes crt-hsync-b {
+  0%,
+  88%,
+  100% {
+    transform: translateY(0);
+  }
+  88.4% {
+    transform: translateY(1px);
+  }
+  88.8% {
+    transform: translateY(0);
+  }
+}
+
+/* --- Blinking cursor ------------------------------------------------------- */
+.cursor-blink {
+  animation: cursor-blink 1.2s steps(1, end) infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The large boot cursor: blinks exactly 3 times, then smoothly fades out and
+   holds at 0. onAnimationEnd hands control to the terminal. The .01% steps are
+   crisp on/off blinks; the final 60% → 100% is a smooth fade. */
+.cursor-blink-out {
+  animation: cursor-blink-out 2.4s ease forwards;
+}
+
+@keyframes cursor-blink-out {
+  0%,
+  8% {
+    opacity: 1;
+  }
+  8.01%,
+  16% {
+    opacity: 0;
+  }
+  16.01%,
+  24% {
+    opacity: 1;
+  }
+  24.01%,
+  32% {
+    opacity: 0;
+  }
+  32.01%,
+  40% {
+    opacity: 1;
+  }
+  40.01%,
+  48% {
+    opacity: 0;
+  }
+  48.01%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The terminal prompt cursor: dimmer, with irregular timing so it feels alive. */
+.cursor-blink-irregular {
+  animation: cursor-blink-irregular 3.4s ease infinite;
+}
+
+@keyframes cursor-blink-irregular {
+  0%,
+  16% {
+    opacity: 0.85;
+  }
+  19%,
+  24% {
+    opacity: 0.08;
+  }
+  27%,
+  52% {
+    opacity: 0.85;
+  }
+  55%,
+  58% {
+    opacity: 0.12;
+  }
+  61%,
+  79% {
+    opacity: 0.85;
+  }
+  82%,
+  85% {
+    opacity: 0.1;
+  }
+  88%,
+  100% {
+    opacity: 0.85;
+  }
+}
+
+/* Reduced-motion fallback so the boot still hands off (animationend fires). */
+@keyframes cursor-fade-out-reduced {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* --- Very slight text shimmer — the phosphor breathing --------------------- */
+.crt-shimmer {
+  animation: crt-shimmer 7s ease-in-out infinite;
+}
+
+@keyframes crt-shimmer {
+  0% {
+    filter: brightness(1);
+  }
+  22% {
+    filter: brightness(1.05);
+  }
+  38% {
+    filter: brightness(0.99);
+  }
+  61% {
+    filter: brightness(1.06);
+  }
+  77% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.02);
+  }
+}
+
+/* --- Gentle fade-in for revealed phrases ----------------------------------- */
+.crt-fade-in {
+  opacity: 0;
+  animation: crt-fade-in 1.2s ease forwards;
+}
+
+@keyframes crt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- Memory degradation grain — subtle texture during playback ------------- */
+/* Driven by the memory's degradation reading; kept very faint and restrained. */
+.memory-grain {
+  background-image: repeating-radial-gradient(
+    circle at 30% 40%,
+    rgba(125, 255, 176, 0.05) 0 1px,
+    transparent 1px 4px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  animation: memory-grain 1.6s steps(3) infinite;
+}
+
+@keyframes memory-grain {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-1.5%, 1%, 0);
+  }
+}
+
+/* --- Fade to black when entering a recovered memory ------------------------ */
+.archive-fadeout {
+  opacity: 0;
+  animation: crt-fade-in 0.8s ease forwards;
+}
+
+/* --- One-shot transition flicker (boot → terminal handover) ---------------- */
+.crt-transition-flash {
+  animation: crt-transition-flash 0.8s ease-out forwards;
+}
+
+@keyframes crt-transition-flash {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.6;
+  }
+  24% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.28;
+  }
+  52% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- Respect reduced-motion ------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .crt-flicker,
+  .crt-hsync,
+  .crt-shimmer,
+  .disk-bloom,
+  .disk-progress,
+  .memory-grain {
+    animation: none;
+  }
+  .cursor-blink {
+    animation: none;
+    opacity: 1;
+  }
+  .cursor-blink-irregular {
+    animation: none;
+    opacity: 0.85;
+  }
+  /* Keep a fade (no blink) so the handoff still fires onAnimationEnd. */
+  .cursor-blink-out {
+    animation: cursor-fade-out-reduced 1s ease forwards;
+  }
+  .crt-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+  .crt-transition-flash {
+    animation: none;
+    opacity: 0;
+  }
+}
