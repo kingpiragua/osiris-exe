@@ -8,6 +8,13 @@ export interface MemoryPanel {
   id: string;
   /** The line the memory speaks. */
   line: string;
+  /** Optional panel artwork (path under /public). Rendered with CRT treatment. */
+  image?: string;
+  /** Intrinsic image dimensions, for layout without reflow. */
+  imageWidth?: number;
+  imageHeight?: number;
+  /** Accessible description of the artwork. */
+  alt?: string;
 }
 
 export interface RecoveredMemory {
