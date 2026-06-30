@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import RecoveredMemory from "@/components/archive/RecoveredMemory";
 import CRTScreen from "@/components/crt/CRTScreen";
-import { allMemoryIds, getMemory } from "@/content/memories";
+import { allMemoryIds, getMemory, getNextMemoryId } from "@/content/memories";
 
 export function generateStaticParams() {
   return allMemoryIds().map((id) => ({ id }));
@@ -32,9 +32,11 @@ export default async function MemoryPage({
   const memory = getMemory(id);
   if (!memory) notFound();
 
+  const nextId = getNextMemoryId(id) ?? null;
+
   return (
     <CRTScreen>
-      <RecoveredMemory memory={memory} />
+      <RecoveredMemory memory={memory} nextId={nextId} />
     </CRTScreen>
   );
 }

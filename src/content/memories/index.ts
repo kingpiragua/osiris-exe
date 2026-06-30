@@ -21,3 +21,11 @@ export function allMemoryIds(): string[] {
 export function allMemories(): RecoveredMemory[] {
   return Object.values(MEMORIES);
 }
+
+/** The id of the memory recovered after `id`, or undefined if it's the last. */
+export function getNextMemoryId(id: string): string | undefined {
+  const ids = allMemoryIds();
+  const index = ids.indexOf(id);
+  if (index === -1 || index === ids.length - 1) return undefined;
+  return ids[index + 1];
+}

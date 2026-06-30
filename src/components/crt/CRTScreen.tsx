@@ -20,7 +20,10 @@ interface CRTScreenProps {
  */
 export default function CRTScreen({ children }: CRTScreenProps) {
   return (
-    <div className="relative min-h-screen w-full bg-black">
+    // No bg here: the body is black (globals), so a portaled GhostLayer at z-0
+    // can sit behind this shell (z-10) and still show. z-10 makes this a
+    // stacking context above the ghost layer.
+    <div className="relative z-10 min-h-screen w-full">
       <Disk />
 
       <div className="crt-hsync">

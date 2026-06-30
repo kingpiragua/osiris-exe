@@ -22,9 +22,22 @@ const VALUE = "text-sm uppercase tracking-wide text-phosphor sm:text-base";
 const NOTE = "text-base tracking-wide text-phosphor text-phosphor-glow sm:text-lg";
 
 // The record's layout is fixed (part of the OSIRIS visual language); the values
-// come from the memory's data.
+// come from the memory's data, and fields render only when present.
 function buildBlocks(memory: RecoveredMemory): Block[] {
-  return [
+  const label = (text: string): Block => ({
+    kind: "text",
+    text,
+    className: LABEL,
+    speed: 26,
+  });
+  const value = (text: string, extra = ""): Block => ({
+    kind: "text",
+    text,
+    className: `${VALUE} ${extra}`.trim(),
+    speed: 30,
+  });
+
+  const blocks: Block[] = [
     {
       kind: "text",
       text: `RECOVERED MEMORY ${memory.id}`,
@@ -44,38 +57,53 @@ function buildBlocks(memory: RecoveredMemory): Block[] {
         "text-2xl font-bold uppercase tracking-[0.3em] text-phosphor text-phosphor-glow sm:text-4xl",
       speed: 70,
     },
-    { kind: "text", text: "LOCATION:", className: LABEL, speed: 26 },
-    { kind: "text", text: memory.location, className: `${VALUE} break-words`, speed: 22 },
-    { kind: "text", text: "DATE:", className: LABEL, speed: 26 },
-    { kind: "text", text: memory.date, className: VALUE, speed: 32 },
-    { kind: "text", text: "STATUS:", className: LABEL, speed: 26 },
-    { kind: "text", text: memory.status, className: VALUE, speed: 32 },
-    { kind: "text", text: "SIGNAL QUALITY:", className: LABEL, speed: 26 },
-    {
+  ];
+
+  if (memory.location) {
+    blocks.push(label("LOCATION:"), value(memory.location, "break-words"));
+  }
+  if (memory.timestamp) {
+    blocks.push(label("TIMESTAMP:"), value(memory.timestamp));
+  } else if (memory.date) {
+    blocks.push(label("DATE:"), value(memory.date));
+  }
+
+  blocks.push(label("STATUS:"), value(memory.status));
+
+  if (typeof memory.signalQuality === "number") {
+    blocks.push(label("SIGNAL QUALITY:"), {
       kind: "signal",
       value: memory.signalQuality,
       className: `${VALUE} text-phosphor text-phosphor-glow`,
-    },
-    { kind: "text", text: "MEMORY DEGRADATION:", className: LABEL, speed: 26 },
-    { kind: "text", text: `${memory.degradation}%`, className: VALUE, speed: 32 },
-    { kind: "text", text: "RECOVERY TYPE:", className: LABEL, speed: 26 },
-    { kind: "text", text: memory.recoveryType, className: VALUE, speed: 26 },
-    { kind: "text", text: "ARCHIVE NOTE:", className: LABEL, speed: 26 },
-    ...memory.note.map((line, i) => ({
-      kind: "text" as const,
+    });
+  }
+
+  blocks.push(label("MEMORY DEGRADATION:"), value(`${memory.degradation}%`));
+
+  if (memory.recoveryType) {
+    blocks.push(label("RECOVERY TYPE:"), value(memory.recoveryType));
+  }
+
+  blocks.push(label("ARCHIVE NOTE:"));
+  memory.note.forEach((line, i) => {
+    blocks.push({
+      kind: "text",
       text: line,
       className: i === 0 ? `mt-2 ${NOTE}` : NOTE,
       speed: 45,
-    })),
-    {
-      kind: "text",
-      text: "PRESS ENTER TO BEGIN MEMORY PLAYBACK",
-      className:
-        "mt-10 text-sm uppercase tracking-[0.3em] text-phosphor text-phosphor-glow sm:text-base",
-      speed: 34,
-      cursorPersist: true,
-    },
-  ];
+    });
+  });
+
+  blocks.push({
+    kind: "text",
+    text: "PRESS ENTER TO BEGIN MEMORY PLAYBACK",
+    className:
+      "mt-10 text-sm uppercase tracking-[0.3em] text-phosphor text-phosphor-glow sm:text-base",
+    speed: 34,
+    cursorPersist: true,
+  });
+
+  return blocks;
 }
 
 interface ArchiveRecordProps {

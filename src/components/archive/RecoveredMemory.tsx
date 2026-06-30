@@ -14,6 +14,8 @@ type Phase = "reading" | "toBlack" | "playing";
 
 interface RecoveredMemoryProps {
   memory: RecoveredMemoryData;
+  /** The next memory's id, or null if this is the last recovered memory. */
+  nextId?: string | null;
 }
 
 /**
@@ -24,11 +26,16 @@ interface RecoveredMemoryProps {
  * and the placeholder playback is revealed. A fainter hum runs underneath so the
  * black has something to cut from. Esc returns to the archive at any time.
  */
-export default function RecoveredMemory({ memory }: RecoveredMemoryProps) {
+export default function RecoveredMemory({
+  memory,
+  nextId = null,
+}: RecoveredMemoryProps) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("reading");
   const [armed, setArmed] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [canAdvance, setCanAdvance] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   // Inside a recovered memory, the DISK stays awake.
   useBodyClass("recovering", true);
@@ -86,6 +93,27 @@ export default function RecoveredMemory({ memory }: RecoveredMemoryProps) {
     return () => clearTimeout(timer);
   }, [flash]);
 
+  // Enter (or tap) recovers the next memory: fade to black, then navigate.
+  useEffect(() => {
+    if (phase !== "playing" || !canAdvance || !nextId || leaving) return;
+
+    const advance = () => {
+      setLeaving(true);
+      archiveSound.silence(0.3);
+      window.setTimeout(() => router.push(`/archive/${nextId}`), 800);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Enter") advance();
+    };
+
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", advance);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", advance);
+    };
+  }, [phase, canAdvance, nextId, leaving, router]);
+
   // Memory degradation drives the faint playback grain.
   const grainOpacity = Math.min(0.2, memory.degradation / 100);
 
@@ -93,13 +121,28 @@ export default function RecoveredMemory({ memory }: RecoveredMemoryProps) {
     <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col items-start px-4 pt-[14vh] pb-24 sm:px-8 sm:pt-[16vh]">
       {phase === "playing" ? (
         <>
-          <MemoryPlayback panels={memory.panels} />
-          <p
-            className="crt-fade-in mt-16 text-[0.7rem] uppercase tracking-[0.35em] text-phosphor-dim sm:text-xs"
-            style={{ animationDelay: "1800ms" }}
-          >
-            PRESS ESC TO RETURN TO ARCHIVE
-          </p>
+          <MemoryPlayback
+            memory={memory}
+            onComplete={() => setCanAdvance(true)}
+          />
+          {canAdvance && (
+            <div className="crt-fade-in mt-16 space-y-2">
+              {nextId ? (
+                <>
+                  <p className="text-[0.7rem] uppercase tracking-[0.35em] text-phosphor text-phosphor-glow sm:text-xs">
+                    PRESS ENTER TO RECOVER NEXT MEMORY
+                  </p>
+                  <p className="text-[0.65rem] uppercase tracking-[0.35em] text-phosphor-dim">
+                    PRESS ESC TO RETURN TO ARCHIVE
+                  </p>
+                </>
+              ) : (
+                <p className="text-[0.7rem] uppercase tracking-[0.35em] text-phosphor-dim sm:text-xs">
+                  PRESS ESC TO RETURN TO ARCHIVE
+                </p>
+              )}
+            </div>
+          )}
         </>
       ) : (
         <ArchiveRecord memory={memory} onReady={() => setArmed(true)} />
@@ -127,6 +170,14 @@ export default function RecoveredMemory({ memory }: RecoveredMemoryProps) {
         <div
           aria-hidden="true"
           className="crt-transition-flash pointer-events-none fixed inset-0 z-50 bg-black"
+        />
+      )}
+
+      {/* Fade to black while recovering the next memory. */}
+      {leaving && (
+        <div
+          aria-hidden="true"
+          className="archive-fadeout pointer-events-none fixed inset-0 z-50 bg-black"
         />
       )}
     </div>

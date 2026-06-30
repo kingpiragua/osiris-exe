@@ -619,6 +619,77 @@ body {
   }
 }
 
+/* --- SIGNAL transmission treatment (Memory 002) ---------------------------- */
+/* Faint burn-in words drifting behind the playback. */
+.ghost-word {
+  position: absolute;
+  color: var(--phosphor);
+  font-size: clamp(1.1rem, 4.5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* Base opacity for reduced-motion; the animation drives it otherwise. */
+  opacity: 0.05;
+  /* No blur (it re-rasterizes under the shimmer filter and janks); composite
+     transform/opacity only, on its own layer (portaled out of the filter). */
+  will-change: transform, opacity;
+  animation: ghostDrift 13s ease-in-out infinite;
+}
+
+@keyframes ghostDrift {
+  0%,
+  100% {
+    opacity: 0.025;
+    transform: translate3d(0, 18px, 0);
+  }
+  50% {
+    opacity: 0.07;
+    transform: translate3d(-14px, -24px, 0);
+  }
+}
+
+/* A fast corruption flash between panels. Base opacity 0; the burst drives it. */
+.signal-corruption {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--phosphor);
+  text-shadow: 0 0 6px rgba(125, 255, 176, 0.5);
+  opacity: 0;
+  animation: signalCorruption 0.22s steps(4, end) both;
+}
+
+@keyframes signalCorruption {
+  0% {
+    opacity: 0.9;
+    transform: translateX(-2px);
+  }
+  25% {
+    opacity: 0.3;
+    transform: translateX(3px);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateX(-1px);
+  }
+  75% {
+    opacity: 0.5;
+    transform: translateX(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+/* The final reveal — heavier phosphor glow than any other text. */
+.signal-final {
+  text-shadow:
+    0 0 6px rgba(125, 255, 176, 0.95),
+    0 0 20px rgba(125, 255, 176, 0.6),
+    0 0 44px rgba(125, 255, 176, 0.4);
+}
+
 /* --- Fade to black when entering a recovered memory ------------------------ */
 .archive-fadeout {
   opacity: 0;
@@ -661,7 +732,9 @@ body {
   .memory-grain,
   .memory-boot-glitch,
   .memory-static,
-  .memory-glitch-bars {
+  .memory-glitch-bars,
+  .ghost-word,
+  .signal-corruption {
     animation: none;
   }
   /* Boot-glitch base opacity is 0; show the art for reduced-motion users. */
