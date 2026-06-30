@@ -1,4 +1,5 @@
 import { memory001 } from "@/content/memories/001";
+import { memory002 } from "@/content/memories/002";
 import type { RecoveredMemory } from "@/content/memories/types";
 
 export type { RecoveredMemory, MemoryPanel } from "@/content/memories/types";
@@ -6,6 +7,7 @@ export type { RecoveredMemory, MemoryPanel } from "@/content/memories/types";
 // The archive's recovered memories, keyed by id. Add new memories here.
 const MEMORIES: Record<string, RecoveredMemory> = {
   [memory001.id]: memory001,
+  [memory002.id]: memory002,
 };
 
 export function getMemory(id: string): RecoveredMemory | undefined {
