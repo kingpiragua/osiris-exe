@@ -18,14 +18,18 @@ contract between content and the engine. Not the narrative itself (Story Bible).
 
 ## Current Status
 
-Template. Today content is largely in-component (e.g., the Memory 001 record).
-This volume should define a data model to externalize it.
+v0.8 — recovered memories are externalized to data. `src/content/memories/`
+holds a typed `RecoveredMemory` model (`types.ts`), one file per memory
+(`001.ts`), and a registry (`index.ts`). `ArchiveRecord` and `MemoryPlayback`
+render from data; `/archive/[id]` resolves any memory. Adding a memory = add a
+data file + register it. Non-memory artifacts and an asset pipeline are still
+open.
 
 ## Open Questions
 
-- Format: TS modules, MDX, JSON, or a headless source.
-- Schema for an "artifact" and for a "recovered memory" specifically.
-- Asset pipeline and naming conventions.
+- Format for non-memory artifacts (reports, transmissions, audio).
+- Whether to move from TS modules to MDX/JSON/headless as volume grows.
+- Asset pipeline and naming conventions (esp. for panel artwork).
 
 ## References
 

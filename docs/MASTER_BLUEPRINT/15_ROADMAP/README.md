@@ -26,8 +26,11 @@ franchise. Not detailed task tracking.
 - v0.6 — Recovered Memory 001 record → cut-to-black → playback shell.
 - v0.7 — return-to-archive, persistence, memory-page hum, degradation texture;
   hidden `reset`.
+- v0.8 — content model + dynamic routing: recovered memories are data
+  (`src/content/memories/`), rendered via `/archive/[id]`. Adding a memory is a
+  data file, not a redesign. (Master Blueprint documentation foundation added.)
 
-**Now:** Master Blueprint foundation (this documentation system).
+**Now:** Authoring the next recovered memory and/or real panel artwork.
 
 ## Open Questions
 

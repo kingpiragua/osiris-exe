@@ -41,9 +41,10 @@ emotional and design intent.
 
 ## Current Progress
 
-- **Application:** `osiris-exe` v0.7 — boot rite → terminal → access ritual →
-  Recovered Memory 001 shell (playback placeholder; no artwork yet). Procedural
-  CRT sound, the DISK signature, and recovery persistence are in place.
+- **Application:** `osiris-exe` v0.8 — boot rite → terminal → access ritual →
+  recovered memories rendered from data via `/archive/[id]` (playback
+  placeholder; no artwork yet). Procedural CRT sound, the DISK signature, and
+  recovery persistence are in place.
 - **Companion:** `osiris-motion-comic` — the original single-file motion comic
   and its `canon/` wiki (source of much World/Story/Character material).
 - **Blueprint:** Charter and Creative Direction authored; remaining volumes are
