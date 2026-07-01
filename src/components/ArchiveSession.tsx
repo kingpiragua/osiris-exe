@@ -18,6 +18,7 @@ export default function ArchiveSession() {
   const router = useRouter();
   const [returning, setReturning] = useState<boolean | null>(null);
   const [bootDone, setBootDone] = useState(false);
+  const [skipped, setSkipped] = useState(false);
   const [ready, setReady] = useState(false);
   const [flash, setFlash] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -72,6 +73,27 @@ export default function ArchiveSession() {
     setBootDone(true);
   };
 
+  // Let an impatient visitor skip the boot rite — a tap or any key drops
+  // straight to the terminal (the archive is still "recovered" behind them).
+  useEffect(() => {
+    if (returning !== false || bootDone || skipped) return;
+    const skip = () => {
+      const root = document.documentElement;
+      root.style.setProperty("--disk-progress", "1");
+      root.classList.add("disk-complete");
+      markBootSeen();
+      archiveSound.silence(0.2);
+      setSkipped(true);
+      setReady(true);
+    };
+    window.addEventListener("keydown", skip);
+    window.addEventListener("pointerdown", skip);
+    return () => {
+      window.removeEventListener("keydown", skip);
+      window.removeEventListener("pointerdown", skip);
+    };
+  }, [returning, bootDone, skipped]);
+
   useEffect(() => {
     if (!bootDone) return;
 
@@ -104,7 +126,7 @@ export default function ArchiveSession() {
   return (
     <div className="mx-auto w-full max-w-xl px-4 sm:px-8">
       {/* Boot rite (first-time visitors only) — eases up when the prompt arrives. */}
-      {!returning && (
+      {!returning && !skipped && (
         <div
           className={`flex flex-col items-start transition-[padding] duration-1000 ease-out ${
             ready
@@ -118,6 +140,13 @@ export default function ArchiveSession() {
             onSpeakingEnd={() => archiveSound.silence(0.5)}
           />
         </div>
+      )}
+
+      {/* Skip affordance — only while the boot is still playing. */}
+      {!returning && !skipped && !ready && (
+        <p className="pointer-events-none fixed inset-x-0 bottom-6 z-30 animate-pulse text-center text-[0.6rem] uppercase tracking-[0.35em] text-phosphor-dim opacity-70">
+          tap or press any key to skip
+        </p>
       )}
 
       {/* The archive, waiting. */}
