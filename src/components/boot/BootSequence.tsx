@@ -11,14 +11,11 @@ import TypingText from "@/components/crt/TypingText";
 const HEADER_LINES = ["OSIRIS.EXE", "ARCHIVE : HUMBOLDT-01"] as const;
 
 // The recovery rite — erased memory brought back online, one act at a time.
+// Kept short so the boot stays a beat, not a wait, before the archive opens.
 const LOG_LINES = [
   "RECOVERING MEMORY ................ RECOVERED",
-  "VERIFYING ORAL HISTORIES .......... PARTIAL",
   "REASSEMBLING TIMELINE ............. STABLE",
-  "CROSS-REFERENCING ARCHIVE ......... MATCHED",
   "CHECKING CULTURAL INTEGRITY ....... INTACT",
-  "SYNCHRONIZING WITNESS ACCOUNTS .... SYNCED",
-  "RECOVERING MISSING NAMES .......... FOUND",
   "RESTORING LOST TIMELINE ........... RECONSTRUCTED",
 ] as const;
 
@@ -86,9 +83,9 @@ export default function BootSequence({
     <div className="flex w-full flex-col items-start gap-1">
       <ArchiveLog
         lines={HEADER_LINES}
-        speed={56}
-        lineDelay={520}
-        startDelay={1100}
+        speed={40}
+        lineDelay={300}
+        startDelay={600}
         className="space-y-1"
         lineClassName={HEADER_CLASS}
         onComplete={() => {
@@ -100,15 +97,15 @@ export default function BootSequence({
       {phase >= Phase.Log && (
         <ArchiveLog
           lines={LOG_LINES}
-          speed={46}
-          lineDelay={520}
-          startDelay={900}
+          speed={34}
+          lineDelay={300}
+          startDelay={450}
           className="mt-10 space-y-1"
           lineClassName={LOG_CLASS}
           onProgress={(done, total) =>
             emitProgress(PROGRESS_HEADER + (done / total) * PROGRESS_LOG_SPAN)
           }
-          onComplete={() => window.setTimeout(() => bump(Phase.Welcome), 1800)}
+          onComplete={() => window.setTimeout(() => bump(Phase.Welcome), 700)}
         />
       )}
 
@@ -119,7 +116,7 @@ export default function BootSequence({
           className={WELCOME_CLASS}
           onComplete={() => {
             emitProgress(PROGRESS_WELCOME);
-            window.setTimeout(() => bump(Phase.Final), 1000);
+            window.setTimeout(() => bump(Phase.Final), 500);
           }}
         />
       )}
