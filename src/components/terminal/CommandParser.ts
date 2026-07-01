@@ -40,6 +40,11 @@ export const COMMANDS: CommandSpec[] = [
     run: () => ({ type: "navigate", href: "/archive" }),
   },
   {
+    name: "comic",
+    description: "Play the recovered signal (motion comic)",
+    run: () => ({ type: "navigate", href: "/comic" }),
+  },
+  {
     name: "help",
     description: "Show available commands",
     run: () => helpOutput(),

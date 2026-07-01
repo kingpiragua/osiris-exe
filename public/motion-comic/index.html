@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OSIRIS.EXE // ARCHIVE 01</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Share+Tech+Mono&display=swap');
+
+  :root{
+    --green:#8fdc6a; --green-dim:#3c6a2a;
+    --red:#d1402f;   --red-dim:#5a1712;
+    --gold:#e8c874;
+    --bg:#050403;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ background:var(--bg); overflow-x:hidden; }
+  body{
+    font-family:'Share Tech Mono',monospace;
+    color:var(--green);
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ---------- scroll progress bar ---------- */
+  .progress{
+    position:fixed; top:0; left:0; height:2px; z-index:60;
+    background:var(--green); width:0%;
+    box-shadow:0 0 10px var(--green);
+    transition:width .15s linear, background .8s ease, box-shadow .8s ease;
+  }
+  .progress.red{ background:var(--red); box-shadow:0 0 10px var(--red); }
+
+  /* ---------- intro ---------- */
+  .intro{
+    height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    gap:18px; padding:24px;
+  }
+  .intro h1{
+    font-family:'Cinzel',serif; font-weight:900;
+    font-size:clamp(38px,13vw,110px); color:#fff; line-height:.9;
+    text-shadow:0 0 30px rgba(255,224,150,.5), 0 0 60px rgba(232,200,116,.3);
+  }
+  .intro h1 .ext{ color:var(--gold); }
+  .intro .sub{ color:var(--gold); letter-spacing:.4em; font-size:clamp(10px,3vw,15px); }
+  .intro .tag{ color:var(--green); letter-spacing:.28em; font-size:clamp(9px,2.6vw,12px); opacity:.7; max-width:34ch; line-height:1.8; }
+  .intro .scrollcue{
+    margin-top:20px; font-size:11px; letter-spacing:.3em; opacity:.6;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:.25} 50%{opacity:.8} }
+
+  /* ---------- panels ---------- */
+  .stage{ width:100%; }
+  .panel{
+    position:relative; width:100%;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    background:#000;
+  }
+  .panel .frame{
+    position:relative;
+    width:100%; max-width:760px;
+    aspect-ratio:1024/1536;
+    overflow:hidden;
+  }
+  .panel img{
+    position:absolute; top:50%; left:50%;
+    width:100%; height:100%;              /* full page — no edge crop */
+    object-fit:contain;
+    transform:translate(-50%,-50%) scale(1);
+    will-change:transform;
+    filter:brightness(.62) saturate(.9);
+    transition:filter 1.2s ease;
+  }
+  .panel.active img{ filter:brightness(1) saturate(1.02); }
+
+  /* Ken Burns targets via pan classes (JS sets --px/--py) */
+  .panel img{
+    transform:translate(calc(-50% + var(--px,0px)), calc(-50% + var(--py,0px))) scale(var(--sc,1));
+    transition:transform .2s linear;
+  }
+
+  /* ---------- CRT scanline + glow overlays ---------- */
+  .panel .scan{
+    position:absolute; inset:0; z-index:3; pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,.18) 3px, rgba(0,0,0,0) 4px);
+    mix-blend-mode:multiply; opacity:.55;
+  }
+  .panel .glow{
+    position:absolute; inset:0; z-index:4; pointer-events:none;
+    opacity:0; transition:opacity 1.2s ease, box-shadow 1.2s ease;
+  }
+  .panel.active .glow{ opacity:1; }
+  .panel[data-signal="green"] .glow,
+  .panel[data-signal="green-red"] .glow{
+    box-shadow:inset 0 0 120px 20px rgba(143,220,106,.22);
+  }
+  .panel[data-signal="red"] .glow{
+    box-shadow:inset 0 0 140px 30px rgba(209,64,47,.30);
+  }
+  .panel[data-signal="neutral"] .glow{
+    box-shadow:inset 0 0 100px 20px rgba(232,200,116,.12);
+  }
+  /* vignette always */
+  .panel .vig{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    box-shadow:inset 0 0 160px 40px rgba(0,0,0,.7);
+  }
+
+  /* caption tab */
+  .panel .cap{
+    position:absolute; z-index:6; left:50%; bottom:5%;
+    transform:translateX(-50%) translateY(14px);
+    opacity:0; transition:opacity .8s ease, transform .8s ease;
+    font-size:clamp(11px,2.6vw,15px); letter-spacing:.16em;
+    color:var(--green); background:rgba(5,8,4,.82);
+    border:1px solid var(--green-dim); padding:8px 16px;
+    text-shadow:0 0 8px rgba(143,220,106,.4); white-space:nowrap;
+    max-width:90%;
+  }
+  .panel[data-signal="red"] .cap{
+    color:var(--red); border-color:var(--red-dim);
+    text-shadow:0 0 8px rgba(209,64,47,.5);
+  }
+  .panel.active .cap{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* finale flourish */
+  .panel.finale .glow{ animation:redpulse 3.5s ease-in-out infinite; }
+  @keyframes redpulse{
+    0%,100%{ box-shadow:inset 0 0 140px 30px rgba(209,64,47,.30); }
+    50%    { box-shadow:inset 0 0 180px 50px rgba(209,64,47,.5); }
+  }
+
+  /* outro */
+  .outro{
+    height:70vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; gap:16px;
+    color:var(--red);
+  }
+  .outro .tbc{ font-family:'Cinzel',serif; font-size:clamp(20px,6vw,42px); letter-spacing:.1em; }
+  .outro .next{ letter-spacing:.3em; font-size:12px; opacity:.7; }
+  .outro .credit{ margin-top:24px; font-size:11px; color:#8f7d54; letter-spacing:.24em; line-height:2; }
+
+  @media (prefers-reduced-motion: reduce){
+    .panel img{ transition:none !important; }
+    .intro .scrollcue{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+
+  <div class="stage" id="stage">
+    <!-- intro -->
+    <section class="intro">
+      <div class="sub" id="i-sub">ARCHIVE 01</div>
+      <h1>OSIRIS<span class="ext">.EXE</span></h1>
+      <div class="tag" id="i-tag">MEMORY IS THE OLDEST FORM OF RESISTANCE</div>
+      <div class="scrollcue">SCROLL TO DESCEND ▽</div>
+    </section>
+    <!-- panels injected here -->
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    const D = window.OSIRIS_ISSUE;
+    const stage = document.getElementById('stage');
+    const prog = document.getElementById('progress');
+    document.getElementById('i-sub').textContent = D.issue;
+    document.getElementById('i-tag').textContent = D.tagline;
+
+    const panMap = {
+      top:    {px:0,   py:'-6%'},
+      bottom: {px:0,   py:'6%'},
+      center: {px:0,   py:0},
+      left:   {px:'-6%',py:0},
+      right:  {px:'6%', py:0}
+    };
+
+    // build panels
+    D.pages.forEach((p, i) => {
+      const sec = document.createElement('section');
+      sec.className = 'panel' + (p.finale ? ' finale' : '');
+      sec.dataset.signal = p.signal;
+      sec.dataset.index = i;
+      const src = D.assetDir + p.file + '.' + D.ext;
+      sec.innerHTML = `
+        <div class="frame">
+          <img src="${src}" alt="${p.label||''}" loading="lazy">
+          <div class="vig"></div>
+          <div class="scan"></div>
+          <div class="glow"></div>
+          ${p.label ? `<div class="cap">${p.label}</div>` : ''}
+        </div>`;
+      stage.appendChild(sec);
+    });
+
+    // outro
+    const outro = document.createElement('section');
+    outro.className = 'outro';
+    outro.innerHTML = `
+      <div class="tbc">TO BE CONTINUED</div>
+      <div class="next">OSIRIS.EXE #2</div>
+      <div class="credit">DSB LABS &nbsp;◆&nbsp; DISK DARIÁN &nbsp;◆&nbsp; F.O. SANCHEZ<br>LA MEMORIA NO SE BORRA</div>`;
+    stage.appendChild(outro);
+
+    const panels = [...document.querySelectorAll('.panel')];
+
+    // scroll-driven Ken Burns + active state + signal HUD
+    let ticking = false;
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(()=>{
+        const vh = window.innerHeight;
+        let activeSignal = 'neutral';
+        panels.forEach(pan=>{
+          const r = pan.getBoundingClientRect();
+          const img = pan.querySelector('img');
+          // progress of this panel through viewport: 0 (entering) .. 1 (leaving)
+          const prog01 = 1 - (r.top + r.height/2) / (vh + r.height) ; // ~0..1
+          const clamped = Math.max(0, Math.min(1, prog01));
+          // Ken Burns — clip-safe: the full page is always visible.
+          // Scale peaks at 1.0 when centered (whole page fills the frame)
+          // and eases to .95 at the edges; the pan drift stays inside the
+          // small margin that sub-1 scale creates, so nothing is ever cropped.
+          const drift = (clamped - 0.5) * 2; // -1..1 (0 when centered)
+          const sc = 1 - Math.abs(drift) * 0.05; // 1.0 centered -> .95 at edges
+          const frame = pan.querySelector('.frame');
+          const fx = frame.clientWidth;
+          const fy = frame.clientHeight || fx * 1.5;
+          // 0.015 < half of the (1-sc) margin, so drift never reaches the edge
+          img.style.setProperty('--px', (drift * fx * 0.015).toFixed(1) + 'px');
+          img.style.setProperty('--py', (drift * fy * 0.015).toFixed(1) + 'px');
+          img.style.setProperty('--sc', sc.toFixed(3));
+          // active when roughly centered
+          const centered = r.top < vh*0.55 && r.bottom > vh*0.45;
+          pan.classList.toggle('active', centered);
+          if(centered) activeSignal = pan.dataset.signal;
+        });
+        // progress-bar color follows the active signal (green -> red)
+        const isRed = activeSignal === 'red';
+        prog.classList.toggle('red', isRed);
+        // scroll progress bar
+        const sc = window.scrollY / (document.body.scrollHeight - vh);
+        prog.style.width = (sc*100).toFixed(1) + '%';
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  </script>
+</body>
+</html>
