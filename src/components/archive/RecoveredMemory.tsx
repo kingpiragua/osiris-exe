@@ -8,13 +8,17 @@ import MemoryPlayback from "@/components/archive/MemoryPlayback";
 import { useBodyClass } from "@/hooks/useBodyClass";
 import { archiveSound } from "@/lib/sound";
 import { markBootSeen, markMemoryRecovered } from "@/lib/recovery";
+import { markFragmentSeen } from "@/lib/archiveProgress";
 import type { RecoveredMemory as RecoveredMemoryData } from "@/content/memories";
 
 type Phase = "reading" | "toBlack" | "playing";
 
 interface RecoveredMemoryProps {
   memory: RecoveredMemoryData;
-  /** The next memory's id, or null if this is the last recovered memory. */
+  /**
+   * The next memory's id, or null when there's no unlocked next fragment —
+   * i.e. this is the end of the currently playable journey.
+   */
   nextId?: string | null;
 }
 
@@ -43,6 +47,7 @@ export default function RecoveredMemory({
   // Remember the visit, and carry a fainter hum into the memory.
   useEffect(() => {
     markMemoryRecovered(memory.id);
+    markFragmentSeen(memory.id);
     markBootSeen();
     archiveSound.startHum(0.022);
     return () => archiveSound.silence(0.3);
@@ -115,6 +120,20 @@ export default function RecoveredMemory({
     };
   }, [phase, canAdvance, nextId, leaving, router]);
 
+  // End of the recovery journey: when the last playable fragment finishes and
+  // there's no unlocked next, the archive plays the recovered signal (the
+  // motion comic) on its own after a short beat. Esc still returns first.
+  useEffect(() => {
+    if (phase !== "playing" || !canAdvance || nextId || leaving) return;
+
+    const timer = window.setTimeout(() => {
+      setLeaving(true);
+      archiveSound.silence(0.3);
+      window.setTimeout(() => router.push("/comic"), 800);
+    }, 2600);
+    return () => window.clearTimeout(timer);
+  }, [phase, canAdvance, nextId, leaving, router]);
+
   // Memory degradation drives the faint playback grain.
   const grainOpacity = Math.min(0.2, memory.degradation / 100);
 
@@ -138,9 +157,14 @@ export default function RecoveredMemory({
                   </p>
                 </>
               ) : (
-                <p className="text-[0.7rem] uppercase tracking-[0.35em] text-phosphor-dim sm:text-xs">
-                  PRESS ESC TO RETURN TO ARCHIVE
-                </p>
+                <>
+                  <p className="text-[0.7rem] uppercase tracking-[0.35em] text-phosphor text-phosphor-glow sm:text-xs">
+                    SIGNAL RECOVERED — PLAYING
+                  </p>
+                  <p className="text-[0.65rem] uppercase tracking-[0.35em] text-phosphor-dim">
+                    PRESS ESC TO RETURN TO ARCHIVE
+                  </p>
+                </>
               )}
             </div>
           )}

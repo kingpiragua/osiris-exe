@@ -32,7 +32,11 @@ export default async function MemoryPage({
   const memory = getMemory(id);
   if (!memory) notFound();
 
-  const nextId = getNextMemoryId(id) ?? null;
+  // Only offer "recover next" when the next fragment is unlocked. When there's
+  // no unlocked next, this is the end of the playable journey — the signal plays.
+  const candidate = getNextMemoryId(id);
+  const next = candidate ? getMemory(candidate) : undefined;
+  const nextId = next && !next.locked ? next.id : null;
 
   return (
     <CRTScreen>
