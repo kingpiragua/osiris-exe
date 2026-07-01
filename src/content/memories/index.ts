@@ -1,8 +1,5 @@
 import { memory001 } from "@/content/memories/001";
 import { memory002 } from "@/content/memories/002";
-import { memory003 } from "@/content/memories/003";
-import { memory004 } from "@/content/memories/004";
-import { memory005 } from "@/content/memories/005";
 import { memory006 } from "@/content/memories/006";
 import { memory007 } from "@/content/memories/007";
 import { memory008 } from "@/content/memories/008";
@@ -16,9 +13,6 @@ export type { RecoveredMemory, MemoryPanel } from "@/content/memories/types";
 const MEMORIES: Record<string, RecoveredMemory> = {
   [memory001.id]: memory001,
   [memory002.id]: memory002,
-  [memory003.id]: memory003,
-  [memory004.id]: memory004,
-  [memory005.id]: memory005,
   [memory006.id]: memory006,
   [memory007.id]: memory007,
   [memory008.id]: memory008,

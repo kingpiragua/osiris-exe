@@ -40,6 +40,7 @@ export default function RecoveredMemory({
   const [flash, setFlash] = useState(false);
   const [canAdvance, setCanAdvance] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [climax, setClimax] = useState(false);
 
   // Inside a recovered memory, the DISK stays awake.
   useBodyClass("recovering", true);
@@ -121,31 +122,45 @@ export default function RecoveredMemory({
   }, [phase, canAdvance, nextId, leaving, router]);
 
   // End of the recovery journey: when the last playable fragment finishes and
-  // there's no unlocked next, the archive plays the recovered signal (the
-  // motion comic) on its own after a short beat. Esc still returns first.
+  // there's no unlocked next, build to a climax and hand off to the recovered
+  // signal (the motion comic). Esc still returns before the cut.
   useEffect(() => {
-    if (phase !== "playing" || !canAdvance || nextId || leaving) return;
-
-    const timer = window.setTimeout(() => {
-      setLeaving(true);
-      archiveSound.silence(0.3);
-      window.setTimeout(() => router.push("/comic"), 800);
-    }, 2600);
+    if (phase !== "playing" || !canAdvance || nextId || climax) return;
+    const timer = window.setTimeout(() => setClimax(true), 1100);
     return () => window.clearTimeout(timer);
-  }, [phase, canAdvance, nextId, leaving, router]);
+  }, [phase, canAdvance, nextId, climax]);
+
+  // The climax: tension rises, the screen blooms to white, then cuts to the comic.
+  useEffect(() => {
+    if (!climax) return;
+    archiveSound.startHum(0.05);
+    const flick = window.setTimeout(() => archiveSound.flick(), 1650);
+    const go = window.setTimeout(() => {
+      archiveSound.silence(0.2);
+      router.push("/comic");
+    }, 2150);
+    return () => {
+      window.clearTimeout(flick);
+      window.clearTimeout(go);
+    };
+  }, [climax, router]);
 
   // Memory degradation drives the faint playback grain.
   const grainOpacity = Math.min(0.2, memory.degradation / 100);
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col items-start px-4 pt-[14vh] pb-24 sm:px-8 sm:pt-[16vh]">
+    <div
+      className={`mx-auto flex min-h-screen w-full max-w-xl flex-col items-start px-4 pt-[14vh] pb-24 sm:px-8 sm:pt-[16vh] ${
+        climax ? "signal-climax-shake" : ""
+      }`}
+    >
       {phase === "playing" ? (
         <>
           <MemoryPlayback
             memory={memory}
             onComplete={() => setCanAdvance(true)}
           />
-          {canAdvance && (
+          {canAdvance && !climax && (
             <div className="crt-fade-in mt-16 space-y-2">
               {nextId ? (
                 <>
@@ -211,6 +226,18 @@ export default function RecoveredMemory({
           aria-hidden="true"
           className="archive-fadeout pointer-events-none fixed inset-0 z-50 bg-black"
         />
+      )}
+
+      {/* Climactic hand-off: the signal blooms to white, then cuts to the comic. */}
+      {climax && (
+        <div
+          aria-hidden="true"
+          className="signal-climax pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
+        >
+          <span className="signal-climax-text text-center text-2xl font-bold uppercase tracking-[0.5em] text-phosphor sm:text-4xl">
+            The Signal Is Live
+          </span>
+        </div>
       )}
     </div>
   );

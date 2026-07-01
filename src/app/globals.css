@@ -950,8 +950,88 @@ body {
   }
 }
 
+/* --- Climactic hand-off into the recovered signal (the motion comic) ------- */
+.signal-climax {
+  animation: signalClimaxBloom 2.3s ease-in forwards;
+}
+@keyframes signalClimaxBloom {
+  0% {
+    background: radial-gradient(circle at 50% 50%, rgba(65, 255, 122, 0), rgba(0, 0, 0, 0));
+  }
+  45% {
+    background: radial-gradient(circle at 50% 50%, rgba(65, 255, 122, 0.18), rgba(0, 0, 0, 0.55));
+  }
+  72% {
+    background: radial-gradient(circle at 50% 50%, rgba(150, 255, 180, 0.92), rgba(15, 50, 25, 0.85));
+  }
+  84% {
+    background: #eafff1;
+  }
+  100% {
+    background: #000;
+  }
+}
+.signal-climax-text {
+  animation: signalClimaxText 2.3s ease-in forwards;
+  text-shadow: 0 0 18px rgba(65, 255, 122, 0.85), 0 0 44px rgba(65, 255, 122, 0.5);
+}
+@keyframes signalClimaxText {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+    letter-spacing: 0.35em;
+    filter: blur(2px);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+    letter-spacing: 0.5em;
+    filter: blur(0);
+  }
+  68% {
+    opacity: 1;
+    transform: scale(1.06);
+    letter-spacing: 0.72em;
+  }
+  80% {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.signal-climax-shake {
+  animation: signalClimaxShake 0.11s steps(2, end) infinite;
+}
+@keyframes signalClimaxShake {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2px, 1px);
+  }
+  50% {
+    transform: translate(2px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -2px);
+  }
+  100% {
+    transform: translate(1px, 2px);
+  }
+}
+
 /* --- Respect reduced-motion ------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
+  .signal-climax {
+    animation: none;
+    background: #000;
+  }
+  .signal-climax-text,
+  .signal-climax-shake {
+    animation: none;
+  }
   .crt-flicker,
   .crt-hsync,
   .crt-shimmer,
