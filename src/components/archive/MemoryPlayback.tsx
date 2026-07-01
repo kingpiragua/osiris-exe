@@ -79,6 +79,10 @@ const CORRUPTION_LINES = [
  */
 export default function MemoryPlayback({ memory, onComplete }: MemoryPlaybackProps) {
   const fx = memory.effects ?? {};
+  // On the GitHub Pages subpath build, next/image doesn't prefix client-side
+  // image src with basePath, so panel art 404s. Prepend it ourselves (empty in
+  // dev, "/osiris-exe" in the Pages build).
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const steps = useMemo(() => buildSteps(memory), [memory]);
   const [index, setIndex] = useState(0);
 
@@ -196,7 +200,7 @@ export default function MemoryPlayback({ memory, onComplete }: MemoryPlaybackPro
                     style={{ animationDelay: "500ms" }}
                   >
                     <Image
-                      src={panel.image}
+                      src={`${basePath}${panel.image}`}
                       alt={panel.alt ?? ""}
                       width={panel.imageWidth ?? 1092}
                       height={panel.imageHeight ?? 720}
