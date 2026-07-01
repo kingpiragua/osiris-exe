@@ -15,9 +15,12 @@ interactive terminal, and recovered fragments that play like memories surfacing.
 
 ## Live
 
+- **Play it live:** https://kingpiragua.github.io/osiris-exe/
 - **Repository:** https://github.com/kingpiragua/osiris-exe
 - **Run locally:** `npm run dev` → <http://localhost:3000>
-- _No public deployment yet — see [Deploy](#deploy)._
+
+Every push to `main` is built as a static export and deployed to GitHub Pages
+by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 
 ## The experience
 
