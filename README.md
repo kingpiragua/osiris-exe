@@ -19,6 +19,15 @@ interactive terminal, and recovered fragments that play like memories surfacing.
 - **Repository:** https://github.com/kingpiragua/osiris-exe
 - **Run locally:** `npm run dev` → <http://localhost:3000>
 
+## Canonical experience path
+
+1. **OSIRIS Portal** — atmospheric entry point at https://kingpiragua.github.io/OSIRIS/
+2. **Archive Terminal** — boot rite, recovery terminal, and canonical fragment sequence at the live URL above.
+3. **Archive Engine v2** — optional Signal/Network lore node at `/osiris-archive-v2.html`, accessible from the terminal or with the `engine` command.
+4. **Recovered Signal** — the Pale Horse Protocol motion comic at `/comic/`.
+
+The portal introduces the world; this repository contains the canonical narrative journey.
+
 Every push to `main` is built as a static export and deployed to GitHub Pages
 by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 

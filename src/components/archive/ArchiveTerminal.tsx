@@ -81,6 +81,7 @@ export default function ArchiveTerminal() {
           "AVAILABLE COMMANDS",
           "open NNN   — recover a fragment",
           "continue   — resume recovery",
+          "engine     — open Archive Engine v2",
           "clear      — clear terminal output",
         );
         break;
@@ -90,6 +91,9 @@ export default function ArchiveTerminal() {
       case "continue":
         if (continueTarget) openFragment(continueTarget.id);
         else print("NO FRAGMENTS AVAILABLE");
+        break;
+      case "engine":
+        router.push("/osiris-archive-v2.html");
         break;
       case "open":
         if (!arg) print("USAGE: OPEN NNN");
@@ -124,6 +128,13 @@ export default function ArchiveTerminal() {
           Signal Strength: <span className="text-phosphor">{signal}</span>
         </p>
       </div>
+
+      <Link
+        href="/osiris-archive-v2.html"
+        className="mt-8 inline-block border border-phosphor/30 px-4 py-3 text-[0.7rem] uppercase tracking-[0.28em] text-phosphor transition-colors hover:border-phosphor hover:bg-phosphor/[0.06] sm:text-xs"
+      >
+        [ Open Archive Engine v2 ]
+      </Link>
 
       <div className="mt-8">
         <p className="text-sm uppercase tracking-[0.35em] text-phosphor text-phosphor-glow sm:text-base">
@@ -174,6 +185,7 @@ export default function ArchiveTerminal() {
         <p>TYPE HELP</p>
         <p>TYPE OPEN 001</p>
         <p>TYPE CONTINUE</p>
+        <p>TYPE ENGINE</p>
       </div>
 
       {output.length > 0 && (
